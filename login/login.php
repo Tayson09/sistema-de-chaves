@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <title>Sistema de Controle de Chaves - IFCE Campus Cedro</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap">
-    <link rel="stylesheet" href="/sistema/assets/css/style.css">
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
     <div class="login-container">

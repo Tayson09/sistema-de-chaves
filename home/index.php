@@ -19,7 +19,7 @@ require_once __DIR__ . '/../includes/config.php';
         </div>
         <div class="user-menu">
             <span>Bem-vindo, <?= htmlspecialchars($_SESSION['usuario_nome']) ?></span>
-            <a href="../includes/logout.php" class="btn-logout"><i class="fas fa-sign-out-alt"></i></a>
+            <a href="../login/login.php" class="btn-logout"><i class="fas fa-sign-out-alt"></i></a>
         </div>
         <ul class="menu">
             <li><a href="index.php" class="active"><i class="fas fa-home"></i> Início</a></li>
