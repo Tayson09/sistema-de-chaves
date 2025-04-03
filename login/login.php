@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 if (session_status() === PHP_SESSION_NONE) {
     session_start([
         'cookie_lifetime' => 86400,
-        'cookie_secure' => true,
+        'cookie_secure'   => true, // Se estiver em ambiente local sem HTTPS, ajuste para false
         'cookie_httponly' => true
     ]);
 }
@@ -17,6 +17,7 @@ $erro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        // Sanitiza o e-mail e obtém a senha em texto plano
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $senha = $_POST['senha'];
 
@@ -24,14 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$email]);
         $usuario = $stmt->fetch();
 
-        if ($usuario && password_verify($senha, $usuario['senha'])) {
-            $_SESSION['usuario_id'] = $usuario['id'];
+        // Verifica se o usuário existe e se o hash da senha bate com o valor armazenado
+        if ($usuario && hash('sha256', $senha) === $usuario['senha']) {
+            $_SESSION['usuario_id']   = $usuario['id'];
             $_SESSION['usuario_nome'] = htmlspecialchars($usuario['nome']);
             $_SESSION['usuario_tipo'] = $usuario['tipo'];
             header('Location: /sistema/home/index.php');
             exit();
         } else {
             $erro = "Credenciais inválidas!";
+            error_log("Falha no login para o email: $email");
         }
     } catch (PDOException $e) {
         error_log("Erro de login: " . $e->getMessage());

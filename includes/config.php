@@ -12,6 +12,21 @@ $options = [
     PDO::ATTR_EMULATE_PREPARES => false
 ];
 
+function contarChavesDisponiveis($pdo) {
+    $stmt = $pdo->query("SELECT COUNT(*) FROM chaves WHERE disponivel = TRUE");
+    return $stmt->fetchColumn();
+}
+
+function contarEmprestimosAtivos($pdo) {
+    $stmt = $pdo->query("SELECT COUNT(*) FROM emprestimos WHERE data_devolucao IS NULL");
+    return $stmt->fetchColumn();
+}
+
+function contarUsuarios($pdo) {
+    $stmt = $pdo->query("SELECT COUNT(*) FROM usuarios WHERE ativo = TRUE");
+    return $stmt->fetchColumn();
+}
+
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
