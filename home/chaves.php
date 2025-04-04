@@ -2,13 +2,11 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/config.php';
 
-// Verifica se é administrador
 if ($_SESSION['usuario_tipo'] !== 'administrador') {
     header('Location: index.php');
     exit;
 }
 
-// Processar cadastro de nova chave
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cadastrar_chave'])) {
     $codigo = trim($_POST['codigo']);
     $descricao = trim($_POST['descricao']);
@@ -23,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cadastrar_chave'])) {
         $stmt->execute([$codigo, $descricao, $local]);
         $sucesso = "Chave cadastrada com sucesso!";
     } catch (PDOException $e) {
-        // Verifica se é erro de código duplicado
         if ($e->errorInfo[1] == 1062) {
             $erro = "Erro: O código da chave já existe!";
         } else {
@@ -32,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cadastrar_chave'])) {
     }
 }
 
-// Processar exclusão de chave
 if (isset($_GET['excluir'])) {
     $id = filter_input(INPUT_GET, 'excluir', FILTER_VALIDATE_INT);
     
@@ -40,7 +36,6 @@ if (isset($_GET['excluir'])) {
         try {
             $pdo->beginTransaction();
             
-            // Verificar se a chave está em empréstimo
             $emprestimo = $pdo->prepare("SELECT id FROM emprestimos WHERE chave_id = ? AND data_devolucao IS NULL");
             $emprestimo->execute([$id]);
             
@@ -59,7 +54,6 @@ if (isset($_GET['excluir'])) {
     }
 }
 
-// Buscar todas as chaves
 $chaves = $pdo->query("
     SELECT 
         id,
@@ -99,7 +93,6 @@ $chaves = $pdo->query("
             <h1><i class="fas fa-key"></i> Gerenciar Chaves</h1>
         </header>
 
-        <!-- Mensagens -->
         <?php if (isset($sucesso)): ?>
             <div class="alert alert-success"><?= $sucesso ?></div>
         <?php endif; ?>
@@ -107,7 +100,6 @@ $chaves = $pdo->query("
             <div class="alert alert-danger"><?= $erro ?></div>
         <?php endif; ?>
 
-        <!-- Formulário de Cadastro -->
         <section class="card">
             <h2><i class="fas fa-plus-circle"></i> Cadastrar Nova Chave</h2>
             <form method="POST">
@@ -149,7 +141,6 @@ $chaves = $pdo->query("
             </form>
         </section>
 
-        <!-- Lista de Chaves -->
         <section class="card">
             <h2><i class="fas fa-list"></i> Chaves Cadastradas</h2>
             <div class="table-responsive">

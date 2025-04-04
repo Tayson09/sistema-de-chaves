@@ -2,13 +2,11 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/config.php';
 
-// Verifica se é administrador ou recepcionista
 if ($_SESSION['usuario_tipo'] !== 'administrador' && $_SESSION['usuario_tipo'] !== 'recepcionista') {
     header('Location: index.php');
     exit;
 }
 
-// Processar novo empréstimo
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['novo_emprestimo'])) {
     $chave_id = filter_input(INPUT_POST, 'chave_id', FILTER_VALIDATE_INT);
     $pessoa_nome = trim(filter_input(INPUT_POST, 'pessoa_nome', FILTER_SANITIZE_STRING));
@@ -18,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['novo_emprestimo'])) {
         try {
             $pdo->beginTransaction();
 
-            // 1. Registrar empréstimo
             $stmt = $pdo->prepare("
                 INSERT INTO emprestimos 
                 (chave_id, pessoa_nome, usuario_id) 
@@ -26,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['novo_emprestimo'])) {
             ");
             $stmt->execute([$chave_id, $pessoa_nome, $usuario_id]);
 
-            // 2. Atualizar status da chave
             $stmt = $pdo->prepare("UPDATE chaves SET disponivel = FALSE WHERE id = ?");
             $stmt->execute([$chave_id]);
 
@@ -41,22 +37,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['novo_emprestimo'])) {
     }
 }
 
-// Processar devolução
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['devolucao'])) {
     $emprestimo_id = filter_input(INPUT_POST, 'emprestimo_id', FILTER_VALIDATE_INT);
 
     if ($emprestimo_id) {
         try {
-            // Obter chave_id para atualização
             $stmt = $pdo->prepare("SELECT chave_id FROM emprestimos WHERE id = ?");
             $stmt->execute([$emprestimo_id]);
             $chave_id = $stmt->fetchColumn();
 
-            // Registrar devolução
             $stmt = $pdo->prepare("UPDATE emprestimos SET data_devolucao = NOW() WHERE id = ?");
             $stmt->execute([$emprestimo_id]);
 
-            // Atualizar status da chave
             $stmt = $pdo->prepare("UPDATE chaves SET disponivel = TRUE WHERE id = ?");
             $stmt->execute([$chave_id]);
 
@@ -69,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['devolucao'])) {
 
 $chaves = $pdo->query("SELECT id, codigo, local FROM chaves WHERE disponivel = TRUE")->fetchAll();
 
-// Buscar empréstimos ativos (atualizado para Passo 4)
 $emprestimos = $pdo->query("
     SELECT 
         e.id, 
