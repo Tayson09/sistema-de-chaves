@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['devolucao'])) {
     }
 }
 
-$chaves = $pdo->query("SELECT id, codigo, local FROM chaves WHERE disponivel = TRUE")->fetchAll();
+$chaves = $pdo->query("SELECT id, codigo, descricao FROM chaves WHERE disponivel = TRUE")->fetchAll();
 
 $emprestimos = $pdo->query("
     SELECT 
@@ -105,7 +105,7 @@ $emprestimos = $pdo->query("
                     <label>Chave:</label>
                     <select name="chave_id" class="form-control" required>
                         <?php foreach ($chaves as $chave): ?>
-                            <option value="<?= $chave['id'] ?>"><?= $chave['codigo'] ?> - <?= $chave['local'] ?></option>
+                            <option value="<?= $chave['id'] ?>"><?= $chave['codigo'] ?> - <?= $chave['descricao'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

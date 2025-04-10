@@ -18,6 +18,6 @@ if (session_status() === PHP_SESSION_NONE) {
     </ul>
     <div class="user-menu">
         <span>Bem-vindo, <?= htmlspecialchars($_SESSION['usuario_nome']) ?></span>
-        <a href="../includes/logout.php" class="btn-logout"><i class="fas fa-sign-out-alt"></i></a>
+        <a href="../login/login.php" class="btn-logout"><i class="fas fa-sign-out-alt"></i></a>
     </div>
 </aside>
