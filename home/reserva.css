@@ -1,0 +1,381 @@
+/* style2.css - Design Premium Corrigido */
+/* =================================== */
+
+/* 1. Variáveis Globais Aprimoradas */
+:root {
+    --ifce-primary: #1A5F2A;       /* Verde institucional mais escuro */
+    --ifce-secondary: #2F9E41;     /* Verde principal */
+    --ifce-accent: #FFD700;        /* Dourado para destaques */
+    --neutral-100: #F8FAFC;        /* Fundo claro suave */
+    --neutral-200: #E2E8F0;        /* Bordas e divisores */
+    --neutral-800: #2D3748;        /* Texto principal */
+    --success: #28A745;            /* Feedback positivo */
+    --danger: #DC3545;             /* Feedback negativo */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    --radius-3xl: 1.5rem;          /* Bordas arredondadas grandes */
+    --radius-lg: 0.75rem;          /* Bordas arredondadas médias */
+}
+
+/* 2. Reset Modernizado */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 3. Tipografia Profissional */
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: var(--neutral-800);
+    background: var(--neutral-100);
+    min-height: 100vh;
+    display: flex;
+}
+
+/* 4. Sidebar Fixo Aprimorado */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, var(--ifce-verde) 0%, var(--ifce-verde-escuro) 100%);
+    color: var(--branco);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-y: auto;
+    box-shadow: var(--sombra-suave);
+}
+
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .logo img {
+    max-width: 160px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.menu {
+    list-style: none;
+    padding: 1rem 0;
+    flex-grow: 1;
+}
+
+.menu li {
+    margin: 0.25rem 0;
+    border-radius: var(--radius);
+    transition: var(--transicao);
+}
+
+.menu li a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--branco);
+    text-decoration: none;
+    font-weight: 500;
+    gap: 0.75rem;
+    border-radius: var(--radius);
+    transition: var(--transicao);
+}
+
+.menu li a i {
+    width: 24px;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+.menu li:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.menu li .active {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: inset 3px 0 0 var(--branco);
+}
+
+.user-menu {
+    margin-top: auto;
+    padding: 1.5rem 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-menu span {
+    display: block;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+}
+
+.btn-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--branco);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    transition: var(--transicao);
+}
+
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+/* 5. Conteúdo Principal Ajustado */
+.main-content {
+    margin-left: 280px;
+    flex: 1;
+    padding: 3rem 4rem;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+
+/* 6. Header Modernizado */
+.header {
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 3rem;
+    box-shadow: var(--shadow-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.header h1 {
+    font-size: 1.75rem;
+    color: var(--ifce-primary);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+}
+
+/* 7. Sistema de Grid Responsivo */
+.sala-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* 8. Cards de Sala Premium */
+.sala-card {
+    background: white;
+    border-radius: var(--radius-3xl);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+}
+
+.sala-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px -12px rgba(45, 158, 65, 0.2);
+}
+
+.sala-header {
+    padding: 1.5rem;
+    background: linear-gradient(90deg, 
+        var(--ifce-primary) 0%, 
+        var(--ifce-secondary) 100%);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    cursor: pointer;
+}
+
+.sala-header::after {
+    content: "";
+    position: absolute;
+    bottom: -30px;
+    right: -30px;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+}
+
+/* 9. Elementos Interativos */
+.btn-expand {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    transition: var(--transition);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.btn-expand:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(90deg);
+}
+
+/* 10. Conteúdo Expansível */
+.reservas-content {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 1.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reservas-content.show {
+    max-height: 600px;
+    opacity: 1;
+    padding: 1.5rem;
+}
+
+/* 11. Lista de Espaços */
+.reservas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.reserva-item {
+    background: var(--neutral-100);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(45, 158, 65, 0.1);
+    transition: var(--transition);
+}
+
+.reserva-item:hover {
+    border-color: var(--ifce-secondary);
+    transform: translateX(5px);
+}
+
+/* 12. Elementos de Texto */
+.dia {
+    font-weight: 600;
+    color: var(--ifce-primary);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.horario {
+    font-size: 0.875rem;
+    color: var(--neutral-800);
+    font-weight: 500;
+    margin-left: 1.8rem;
+}
+
+/* 13. Botões de Ação */
+.btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    padding: 0.5rem;
+    border-radius: var(--radius-lg);
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    transition: var(--transition);
+}
+
+.btn-danger:hover {
+    background: var(--danger);
+    color: white;
+}
+
+/* 14. Responsividade Aprimorada */
+@media (max-width: 1200px) {
+    .main-content {
+        padding: 2rem;
+    }
+    
+    .sala-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+        height: auto;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 1.5rem;
+    }
+
+    .sala-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .btn-cadastrar {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* 15. Animações Profissionais */
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sala-card {
+    animation: cardEntrance 0.6s ease forwards;
+    opacity: 0;
+}
+
+@keyframes iconPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.fas {
+    transition: transform 0.2s ease;
+}
+
+.btn:hover .fas {
+    animation: iconPulse 0.6s ease;
+}

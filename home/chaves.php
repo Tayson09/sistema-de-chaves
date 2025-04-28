@@ -2,15 +2,16 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/config.php';
 
-if ($_SESSION['usuario_tipo'] !== 'administrador') {
-    header('Location: index.php');
+// Permitir apenas administradores e recepcionistas
+if (! in_array($_SESSION['usuario_tipo'], ['administrador', 'recepcionista'], true)) {
+    header('Location: /sistema/home/index.php');
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cadastrar_chave'])) {
-    $codigo = trim($_POST['codigo']);
+    $codigo    = trim($_POST['codigo']);
     $descricao = trim($_POST['descricao']);
-    $local = trim($_POST['local']);
+    $local     = trim($_POST['local']);
 
     try {
         $stmt = $pdo->prepare("
@@ -36,13 +37,19 @@ if (isset($_GET['excluir'])) {
         try {
             $pdo->beginTransaction();
             
-            $emprestimo = $pdo->prepare("SELECT id FROM emprestimos WHERE chave_id = ? AND data_devolucao IS NULL");
+            $emprestimo = $pdo->prepare("
+                SELECT id 
+                FROM emprestimos 
+                WHERE chave_id = ? 
+                  AND data_devolucao IS NULL
+            ");
             $emprestimo->execute([$id]);
             
             if ($emprestimo->rowCount() > 0) {
                 $erro = "Não é possível excluir: Chave está emprestada!";
             } else {
-                $pdo->prepare("DELETE FROM chaves WHERE id = ?")->execute([$id]);
+                $pdo->prepare("DELETE FROM chaves WHERE id = ?")
+                    ->execute([$id]);
                 $sucesso = "Chave excluída com sucesso!";
             }
             
@@ -162,19 +169,23 @@ $chaves = $pdo->query("
                                 <td><?= htmlspecialchars($chave['descricao']) ?></td>
                                 <td><?= htmlspecialchars($chave['local']) ?></td>
                                 <td>
-                                    <?= $chave['disponivel'] ? 
-                                        '<span class="status-disponivel">Disponível</span>' : 
-                                        '<span class="status-indisponivel">Emprestada</span>' ?>
+                                    <?= $chave['disponivel']
+                                        ? '<span class="status-disponivel">Disponível</span>'
+                                        : '<span class="status-indisponivel">Emprestada</span>' 
+                                    ?>
                                 </td>
                                 <td><?= date('d/m/Y H:i', strtotime($chave['data_cadastro'])) ?></td>
                                 <td>
-                                    <a href="editar_chave.php?id=<?= $chave['id'] ?>" class="btn-editar">
+                                    <a 
+                                        href="editar_chave.php?id=<?= $chave['id'] ?>" 
+                                        class="btn btn-sm btn-warning"
+                                    >
                                         <i class="fas fa-edit"></i>
                                         <span>Editar</span>
                                     </a>
                                     <button 
                                         onclick="confirmarExclusao(<?= $chave['id'] ?>)" 
-                                        class="btn-excluir"
+                                        class="btn btn-sm btn-danger"
                                     >
                                         <i class="fas fa-trash"></i>
                                         <span>Excluir</span>

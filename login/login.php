@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 if (session_status() === PHP_SESSION_NONE) {
     session_start([
         'cookie_lifetime' => 86400,
-        'cookie_secure'   => true, // Se estiver em ambiente local sem HTTPS, ajuste para false
+        'cookie_secure'   => true,
         'cookie_httponly' => true
     ]);
 }
@@ -17,24 +17,51 @@ $erro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Sanitiza o e-mail e obtém a senha em texto plano
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-        $senha = $_POST['senha'];
+        $senha = $_POST['senha'] ?? '';
 
         $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?");
         $stmt->execute([$email]);
         $usuario = $stmt->fetch();
 
-        // Verifica se o usuário existe e se o hash da senha bate com o valor armazenado
-        if ($usuario && hash('sha256', $senha) === $usuario['senha']) {
-            $_SESSION['usuario_id']   = $usuario['id'];
-            $_SESSION['usuario_nome'] = htmlspecialchars($usuario['nome']);
-            $_SESSION['usuario_tipo'] = $usuario['tipo'];
-            header('Location: /sistema/home/index.php');
-            exit();
+        if ($usuario) {
+            $senhaSalva = $usuario['senha'];
+            $idUsuario  = $usuario['id'];
+
+            // Primeiro, tenta com password_verify (BCrypt, Argon2 etc)
+            if (password_verify($senha, $senhaSalva)) {
+                // Atualiza se necessário para o algoritmo/configuração atual
+                if (password_needs_rehash($senhaSalva, PASSWORD_DEFAULT)) {
+                    $novaHash = password_hash($senha, PASSWORD_DEFAULT);
+                    $upd = $pdo->prepare("UPDATE usuarios SET senha = ? WHERE id = ?");
+                    $upd->execute([$novaHash, $idUsuario]);
+                }
+                $_SESSION['usuario_id']   = $idUsuario;
+                $_SESSION['usuario_nome'] = htmlspecialchars($usuario['nome']);
+                $_SESSION['usuario_tipo'] = $usuario['tipo'];
+                header('Location: /sistema/home/index.php');
+                exit();
+            }
+            // Se falhar, tenta fallback SHA-256
+            elseif (hash('sha256', $senha) === $senhaSalva) {
+                // Converte para Bcrypt
+                $novaHash = password_hash($senha, PASSWORD_DEFAULT);
+                $upd = $pdo->prepare("UPDATE usuarios SET senha = ? WHERE id = ?");
+                $upd->execute([$novaHash, $idUsuario]);
+
+                $_SESSION['usuario_id']   = $idUsuario;
+                $_SESSION['usuario_nome'] = htmlspecialchars($usuario['nome']);
+                $_SESSION['usuario_tipo'] = $usuario['tipo'];
+                header('Location: /sistema/home/index.php');
+                exit();
+            }
+            else {
+                $erro = "Credenciais inválidas!";
+                error_log("Falha no login para o email: $email");
+            }
         } else {
             $erro = "Credenciais inválidas!";
-            error_log("Falha no login para o email: $email");
+            error_log("Tentativa de login com e-mail inexistente: $email");
         }
     } catch (PDOException $e) {
         error_log("Erro de login: " . $e->getMessage());
@@ -61,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="header">
             <h1 class="system-title">Controle de Chaves</h1>
         </div>
-        
+
         <?php if ($erro): ?>
             <div class="mensagem-erro"><?= htmlspecialchars($erro) ?></div>
         <?php endif; ?>
@@ -71,16 +98,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="email">E-mail:</label>
                 <input type="email" id="email" name="email" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="senha">Senha:</label>
                 <input type="password" id="senha" name="senha" required>
             </div>
 
             <button type="submit">Acessar Sistema</button>
-            
+
             <div class="login-links">
-                <a href="/sistema/login/recuperar-senha.php">Recuperar Senha</a>
+                <a href="/sistema/login/recuperar_senha.php">Recuperar Senha</a>
             </div>
         </form>
     </div>

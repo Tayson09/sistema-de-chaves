@@ -1,0 +1,66 @@
+chaves (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    codigo VARCHAR(20) UNIQUE NOT NULL,
+    descricao VARCHAR(255),
+    local VARCHAR(255) NOT NULL,
+    disponivel BOOLEAN DEFAULT TRUE,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+usuarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    ativo BOOLEAN DEFAULT TRUE,
+    tipo ENUM('recepcionista', 'administrador') DEFAULT 'recepcionista',
+    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+pessoas (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    telefone VARCHAR(20),
+    tipo ENUM('tecnico', 'professor', 'aluno') NOT NULL,
+    matricula VARCHAR(50) UNIQUE,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+emprestimos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    chave_id INT NOT NULL,
+    pessoa_id INT NOT NULL,
+    usuario_id INT NOT NULL, -- Recepcionista que registrou
+    data_emprestimo DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_devolucao DATETIME,
+    observacoes TEXT,
+    FOREIGN KEY (chave_id) REFERENCES chaves(id),
+    FOREIGN KEY (pessoa_id) REFERENCES pessoas(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+
+salas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    localizacao VARCHAR(150) DEFAULT NULL,
+    descricao TEXT DEFAULT NULL,
+    ativo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+reservas_salas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sala_id INT NOT NULL,
+    usuario_id INT NOT NULL,
+    data_inicio DATETIME NOT NULL,
+    data_fim DATETIME NOT NULL,
+    status VARCHAR(20) DEFAULT 'Ativa',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sala_id) REFERENCES salas(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);

@@ -8,9 +8,9 @@ if ($_SESSION['usuario_tipo'] !== 'administrador' && $_SESSION['usuario_tipo'] !
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['novo_emprestimo'])) {
-    $chave_id = filter_input(INPUT_POST, 'chave_id', FILTER_VALIDATE_INT);
-    $pessoa_nome = trim(filter_input(INPUT_POST, 'pessoa_nome', FILTER_SANITIZE_STRING));
-    $usuario_id = $_SESSION['usuario_id'];
+    $chave_id     = filter_input(INPUT_POST, 'chave_id', FILTER_VALIDATE_INT);
+    $pessoa_nome  = trim(filter_input(INPUT_POST, 'pessoa_nome', FILTER_SANITIZE_STRING));
+    $usuario_id   = $_SESSION['usuario_id'];
 
     if ($chave_id && !empty($pessoa_nome)) {
         try {
@@ -18,8 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['novo_emprestimo'])) {
 
             $stmt = $pdo->prepare("
                 INSERT INTO emprestimos 
-                (chave_id, pessoa_nome, usuario_id) 
-                VALUES (?, ?, ?)
+                (chave_id, pessoa_nome, usuario_id, data_emprestimo) 
+                VALUES (?, ?, ?, NOW())
             ");
             $stmt->execute([$chave_id, $pessoa_nome, $usuario_id]);
 
@@ -38,17 +38,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['novo_emprestimo'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['devolucao'])) {
-    $emprestimo_id = filter_input(INPUT_POST, 'emprestimo_id', FILTER_VALIDATE_INT);
+    $emprestimo_id      = filter_input(INPUT_POST, 'emprestimo_id', FILTER_VALIDATE_INT);
+    $usuario_devolucao  = $_SESSION['usuario_id'];
 
     if ($emprestimo_id) {
         try {
+            // Pega a chave vinculada
             $stmt = $pdo->prepare("SELECT chave_id FROM emprestimos WHERE id = ?");
             $stmt->execute([$emprestimo_id]);
             $chave_id = $stmt->fetchColumn();
 
-            $stmt = $pdo->prepare("UPDATE emprestimos SET data_devolucao = NOW() WHERE id = ?");
-            $stmt->execute([$emprestimo_id]);
+            // Atualiza data de devolução e usuário que devolveu
+            $stmt = $pdo->prepare("
+                UPDATE emprestimos
+                SET 
+                    data_devolucao       = NOW(),
+                    usuario_devolucao_id = :udev
+                WHERE id = :eid
+            ");
+            $stmt->execute([
+                ':udev' => $usuario_devolucao,
+                ':eid'  => $emprestimo_id
+            ]);
 
+            // Libera a chave
             $stmt = $pdo->prepare("UPDATE chaves SET disponivel = TRUE WHERE id = ?");
             $stmt->execute([$chave_id]);
 
@@ -59,13 +72,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['devolucao'])) {
     }
 }
 
-$chaves = $pdo->query("SELECT id, codigo, descricao FROM chaves WHERE disponivel = TRUE")->fetchAll();
+$chaves = $pdo->query("
+    SELECT id, codigo, descricao 
+    FROM chaves 
+    WHERE disponivel = TRUE
+    ORDER BY codigo
+")->fetchAll();
 
 $emprestimos = $pdo->query("
     SELECT 
         e.id, 
-        c.codigo AS chave, 
-        e.pessoa_nome AS pessoa, 
+        c.codigo       AS chave, 
+        e.pessoa_nome  AS pessoa, 
         e.data_emprestimo 
     FROM emprestimos e
     LEFT JOIN chaves c ON e.chave_id = c.id
@@ -90,7 +108,11 @@ $emprestimos = $pdo->query("
     <main class="main-content">
         <header class="header">
             <h1><i class="fas fa-key"></i> Gerenciar Empréstimos</h1>
+            <a href="historico.php" class="btn btn-primary">
+                <i class="fas fa-history"></i> Ver Histórico Completo
+            </a>
         </header>
+
         <?php if (isset($sucesso)): ?>
             <div class="alert alert-success"><?= $sucesso ?></div>
         <?php endif; ?>
@@ -105,7 +127,9 @@ $emprestimos = $pdo->query("
                     <label>Chave:</label>
                     <select name="chave_id" class="form-control" required>
                         <?php foreach ($chaves as $chave): ?>
-                            <option value="<?= $chave['id'] ?>"><?= $chave['codigo'] ?> - <?= $chave['descricao'] ?></option>
+                            <option value="<?= $chave['id'] ?>">
+                                <?= htmlspecialchars($chave['codigo']) ?> – <?= htmlspecialchars($chave['descricao']) ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>

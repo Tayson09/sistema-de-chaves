@@ -21,6 +21,15 @@
     --transicao: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --borda: 1px solid #e2e8f0;
     --radius: 0.5rem;
+    --neutral-100: #f8f9fa;         /* Fundo claro */
+    --neutral-800: #2d3439;         /* Texto principal */
+    --success: #28a745;             /* Feedback positivo */
+    --danger: #dc3545;              /* Feedback negativo */
+    --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    --shadow-card: 0 4px 24px -6px rgba(45, 158, 65, 0.2);
+    --radius-xl: 1rem;
+    --radius-md: 0.75rem;
 }
 
 /* Tipografia Moderna */
@@ -454,4 +463,180 @@ body {
 
 .btn:hover [class^="fas"] {
     transform: scale(1.1);
+}
+
+/* Estilos Específicos para Histórico */
+.main-content-full {
+    margin-left: 0;
+    width: 100%;
+    padding: 2rem;
+}
+
+.btn-voltar {
+    position: absolute;
+    left: 1rem;
+    top: 1.5rem;
+    background: var(--ifce-verde);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+}
+
+.btn-voltar:hover {
+    background: var(--ifce-verde-escuro);
+    transform: translateX(-3px);
+}
+
+.filtros-avancados {
+    margin-bottom: 2rem;
+    background: var(--neutral-100);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--sombra-suave);
+}
+
+.grid-4-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Botão Voltar Específico */
+.btn-voltar {
+    position: absolute;
+    left: 1rem;
+    top: 1.5rem;
+    background: var(--ifce-verde) !important;
+    color: var(--branco) !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: var(--radius) !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition) !important;
+    border: none !important;
+    font-size: 0.95rem !important;
+}
+
+.btn-voltar:hover {
+    background: var(--ifce-verde-escuro) !important;
+    transform: translateX(-3px) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* Botões de Ação Específicos */
+button.btn-verde,
+a.btn-limpar {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: var(--transition) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+button.btn-verde {
+    background: linear-gradient(135deg, var(--ifce-verde) 0%, var(--ifce-verde-escuro) 100%) !important;
+    color: var(--branco) !important;
+    padding: 0.75rem 2rem !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--sombra-suave) !important;
+}
+
+button.btn-verde:hover {
+    opacity: 0.9 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-card) !important;
+}
+
+a.btn-limpar {
+    background: linear-gradient(135deg, var(--danger) 0%, #c53030 100%) !important;
+    color: var(--branco) !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--sombra-suave) !important;
+    text-decoration: none;
+}
+
+a.btn-limpar:hover {
+    opacity: 0.9 !important;
+    transform: translateY(-2px) !important;
+}
+
+button {
+    all: unset;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+button:focus {
+    outline: 2px solid var(--ifce-verde) !important;
+    outline-offset: 2px;
+}
+
+.paginacao-container {
+    margin-top: 2rem;
+    padding: 1rem 0;
+    border-top: var(--borda);
+}
+
+.paginacao {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    justify-content: center;
+}
+
+.pagina-link {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    background: var(--neutral-100);
+    color: var(--ifce-verde);
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1px solid var(--ifce-verde);
+}
+
+.pagina-link.ativa {
+    background: var(--ifce-verde);
+    color: white;
+    border-color: var(--ifce-verde);
+}
+
+.pagina-link:hover:not(.ativa) {
+    background: rgba(47, 158, 65, 0.1);
+    transform: translateY(-1px);
+}
+
+.pagina-link.anterior,
+.pagina-link.proxima {
+    background: var(--ifce-verde);
+    color: white;
+}
+
+.pagina-link.anterior:hover,
+.pagina-link.proxima:hover {
+    background: var(--ifce-verde-escuro);
+}
+
+.status-pendente {
+    color: var(--danger);
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius);
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.text-center {
+    text-align: center;
 }

@@ -13,23 +13,7 @@ require_once __DIR__ . '/../includes/config.php';
     <script src="https://kit.fontawesome.com/890bf7e297.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <aside class="sidebar">
-        <div class="logo">
-            <img src="../assets/img/IFCE-logo-braca.png.png" alt="IFCE Cedro">
-        </div>
-        <div class="user-menu">
-            <span>Bem-vindo, <?= htmlspecialchars($_SESSION['usuario_nome']) ?></span>
-            <a href="../login/login.php" class="btn-logout"><i class="fas fa-sign-out-alt"></i></a>
-        </div>
-        <ul class="menu">
-            <li><a href="index.php" class="active"><i class="fas fa-home"></i> Início</a></li>
-            <li><a href="emprestimos.php"><i class="fas fa-key"></i> Empréstimos</a></li>
-            <li><a href="chaves.php"><i class="fas fa-keyboard"></i> Chaves</a></li>
-            <?php if($_SESSION['usuario_tipo'] == 'administrador'): ?>
-                <li><a href="usuarios.php"><i class="fas fa-users-cog"></i> Usuários</a></li>
-            <?php endif; ?>
-        </ul>
-    </aside>
+    <?php include __DIR__ . '/../includes/sidebar.php'; ?>
 
     <main class="main-content">
         <header class="header">
